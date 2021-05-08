@@ -1,38 +1,27 @@
 package com.kammet.discord.bot
 
-import dev.kord.common.entity.Snowflake
-import dev.kord.core.Kord
-import dev.kord.core.entity.ReactionEmoji
-import dev.kord.core.event.message.MessageCreateEvent
-import dev.kord.core.on
+import com.jagrosh.jdautilities.command.CommandClientBuilder
+import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import io.github.cdimascio.dotenv.dotenv
+import net.dv8tion.jda.api.JDABuilder
+import net.dv8tion.jda.api.OnlineStatus
+import net.dv8tion.jda.api.entities.Activity
 
-suspend fun main() {
+fun main() {
     val dotenv = dotenv()
-    val envVar = dotenv["MATH_SUCKS_BOT_TOKEN"]
 
-    val client = Kord(envVar)
-    val pingPong = ReactionEmoji.Custom(Snowflake(527851929968050176), "UTurn", true)
+    val waiter = EventWaiter()
+    val client = CommandClientBuilder()
+        .setPrefix(dotenv["PREFIX"])
+        .setStatus(OnlineStatus.ONLINE)
+        .setOwnerId(dotenv["OWNER_ID"])
+        .setActivity(Activity.playing("sharing naky content)"))
+        .addCommands(InstagramCommand())
 
-    client.on<MessageCreateEvent> {
-        println("${message.author?.username}#${message.author?.discriminator}: ${message.content}")
-        when {
-            message.content == "!ping" -> {
-                val response = message.channel.createMessage("Pong!")
-                response.addReaction(pingPong)
-            }
-            message.content.startsWith("!ig ") -> {
-                if (message.content.substring(3).length < 40) message.channel.createMessage("Weird link")
-                else {
-                    val posts = instagramHandler(message.content.substring(3))
 
-                    if (posts.isEmpty()) message.channel.createMessage("Something went wrong ||Handler error you idiot||")
-                    else for (post in posts) message.channel.createMessage(post)
-                }
-            }
-            else -> return@on
-        }
-    }
-    client.login()
-
+    val api = JDABuilder
+        .createDefault(dotenv["BOT_TOKEN"])
+        .addEventListeners(waiter, client.build())
+        .build()
+    api.awaitReady()
 }
