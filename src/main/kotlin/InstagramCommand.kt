@@ -7,6 +7,7 @@ import com.jagrosh.jdautilities.doc.standard.CommandInfo
 import com.jagrosh.jdautilities.doc.standard.RequiredPermissions
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
+import io.ktor.client.features.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.Permission
@@ -38,8 +39,20 @@ class InstagramCommand : Command() {
         val result = ArrayList<String>()
         val refactoredLink = instagramLinkHandler(link)
 
+        println(refactoredLink)
         if (refactoredLink != null) {
-            val post: String = HttpClient(Apache).get(refactoredLink)
+            val client = HttpClient(Apache) {
+                BrowserUserAgent()
+            }
+
+            val post: String = client.get("https://www.instagram.com/p/COmhaGCs-cK/?__a=1") {
+                headers {
+                    this["Cookie"] =
+                        "ig_cb=2; ig_did=F448025F-8160-411F-8796-CF24E9F05EE1; mid=YBu7dAAEAAEqI7s1NBPEb-rDurOy; shbid=3864; shbts=1620401438.7626996; csrftoken=zycpQfoLpUgYJGxaghdpEjuJU4s93y4C; ds_user_id=1687908138; sessionid=1687908138%3AgYGLqOXMyg9jIq%3A24; datr=VEouYFzDVgiwgakA5W6ziy05; rur=FRC"
+                }
+            }
+
+            println(post)
 
             val map: Map<String, *> = Gson().fromJson(post, Map::class.java) as Map<String, *>
             val graphql = map["graphql"] as Map<String, *>

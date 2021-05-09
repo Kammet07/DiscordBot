@@ -27,7 +27,6 @@ dependencies {
     implementation("net.dv8tion:JDA:4.2.1_253")
     implementation("com.jagrosh:jda-utilities:3.0.5")
     implementation("org.slf4j:slf4j-simple:1.7.30")
-    implementation("io.ktor:ktor-client-core:1.5.3")
     implementation("io.ktor:ktor-client-apache:1.5.3")
     implementation("com.google.code.gson:gson:2.8.6")
     implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
