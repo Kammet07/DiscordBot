@@ -7,9 +7,9 @@ import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
 
-fun main() {
-    val dotenv = dotenv()
+val dotenv = dotenv()
 
+fun main() {
     val waiter = EventWaiter()
     val client = CommandClientBuilder()
         .setPrefix(dotenv["PREFIX"])

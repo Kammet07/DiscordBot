@@ -10,6 +10,7 @@ import io.ktor.client.features.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.json.Json as JsonFeature
 import io.ktor.client.request.*
+import io.ktor.util.date.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import net.dv8tion.jda.api.Permission
@@ -55,7 +56,7 @@ class InstagramCommand : Command() {
 
         //TODO: private posts
 
-        val posts = runBlocking { instagramHandler(link) }
+        val posts = runBlocking { instagramHandler(refactoredLink) }
 
         when {
             posts.isEmpty() -> event.replyError("There are no posts?")
@@ -64,13 +65,14 @@ class InstagramCommand : Command() {
     }
 
     private suspend fun instagramHandler(link: String): List<String> {
+        println(link)
 
         val post: InstagramResponse = client.get(link) {
             headers {
-                this["Cookie"] =
-                    "ig_cb=2; ig_did=F448025F-8160-411F-8796-CF24E9F05EE1; mid=YBu7dAAEAAEqI7s1NBPEb-rDurOy; shbid=3864; shbts=1620401438.7626996; csrftoken=zycpQfoLpUgYJGxaghdpEjuJU4s93y4C; ds_user_id=1687908138; sessionid=1687908138%3AgYGLqOXMyg9jIq%3A24; datr=VEouYFzDVgiwgakA5W6ziy05; rur=FRC"
+                this["Cookie"] = dotenv["IG_COOKIE"]
             }
         }
+
 
         val shortcodeMedia = post.graphql.shortcode_media
 
