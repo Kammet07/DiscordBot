@@ -1,4 +1,4 @@
-package com.kammet.discord.bot
+package com.kammet.discord.bot.com.kammet.discord.bot.commands
 
 import kotlinx.serialization.Serializable
 
