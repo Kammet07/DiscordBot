@@ -5,6 +5,7 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import com.kammet.discord.bot.client
 import com.kammet.discord.bot.dotenv
 import io.ktor.client.call.*
+import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
@@ -45,15 +46,17 @@ class TwitterCommand : Command() {
     }
 
     private suspend fun twitterHandler(link: String): List<String>? {
-        val httpResponse: HttpResponse = client.get(link) {
-            headers {
-                this["Authorization"] = "Bearer " + dotenv["TWT_BEARER_TOKEN"]
+        val httpResponse: HttpResponse? = try {
+            client.get(link) {
+                headers {
+                    this["Authorization"] = "Bearer " + dotenv["TWT_BEARER_TOKEN"]
+                }
             }
+        } catch (e: ClientRequestException) {
+            return null
         }
 
-        if (httpResponse.status.value != 200) return null
-
-        val post: TwitterResponse = httpResponse.receive()
+        val post: TwitterResponse = httpResponse!!.receive()
 
         if (post.errors != null) return post.errors.map { it.detail }
         return post.includes!!.media.map { it.link }

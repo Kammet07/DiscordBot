@@ -15,7 +15,6 @@ data class ShortcodeMedia(
     val video_url: String? = null
 ) {
     val url: String get() = video_url ?: display_url!!
-
 }
 
 @Serializable

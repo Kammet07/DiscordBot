@@ -9,7 +9,7 @@ data class TwitterResponse(val includes: Includes? = null, val errors: Collectio
 data class Includes(val media: Collection<Media>)
 
 @Serializable
-data class Media(val url: String? = null){
+data class Media(val url: String? = null) {
     val link: String get() = url ?: "Video yet not available :'("
 }
 

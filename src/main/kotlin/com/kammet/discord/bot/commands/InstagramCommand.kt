@@ -5,6 +5,7 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import com.kammet.discord.bot.client
 import com.kammet.discord.bot.dotenv
 import io.ktor.client.call.*
+import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
@@ -44,17 +45,18 @@ class InstagramCommand : Command() {
     }
 
     private suspend fun instagramHandler(link: String): List<String>? {
-        val httpResponse: HttpResponse = client.get(link) {
-            headers {
-                this["Cookie"] = dotenv["IG_COOKIE"]
+        val httpResponse: HttpResponse? = try {
+            client.get(link) {
+                headers {
+                    this["Cookie"] = dotenv["IG_COOKIE"]
+                }
             }
+        } catch (e: ClientRequestException) {
+            return null
         }
 
-        println(httpResponse.status)
 
-        if (httpResponse.status.value != 200) return null
-
-        val post: InstagramResponse = httpResponse.receive()
+        val post: InstagramResponse = httpResponse!!.receive()
         val shortcodeMedia = post.graphql.shortcode_media
 
         return when (val edgeSidecarToChildren = shortcodeMedia.edge_sidecar_to_children) {
